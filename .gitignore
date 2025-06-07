@@ -1,0 +1,36 @@
+## .NET Core ##
+**/bin/
+**/obj/
+*.user
+*.suo
+*.userprefs
+*.nupkg
+*.swp
+*.lock.json
+
+## Docker ##
+**/.dockerignore
+**/Dockerfile
+**/docker-compose.*
+**/.env
+*/docker-compose*.yml
+
+## IDE ##
+.vscode/
+.vs/
+.idea/
+*.code-workspace
+
+## Build Outputs ##
+**/publish/
+**/app/
+**/out/
+
+## Logs ##
+*.log
+*.log.*
+
+## Misc ##
+.DS_Store
+*.bak
+*.tmp

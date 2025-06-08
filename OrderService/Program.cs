@@ -20,4 +20,6 @@ app.MapControllers();
 
 app.UseHttpsRedirection();
 
+Console.WriteLine($"{DateTime.UtcNow} OrderService starting...");
+
 app.Run();

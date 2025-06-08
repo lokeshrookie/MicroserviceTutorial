@@ -19,4 +19,6 @@ app.MapControllers();
 
 app.UseHttpsRedirection();
 
+Console.WriteLine($"{DateTime.UtcNow} ProductService starting...");
+
 app.Run();

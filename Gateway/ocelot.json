@@ -1,6 +1,18 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "authservice",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/auth/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ]
+    },
+    {
       "DownstreamPathTemplate": "/products",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -11,6 +23,10 @@
       ],
       "UpstreamPathTemplate": "/products",
       "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
@@ -24,6 +40,10 @@
       ],
       "UpstreamPathTemplate": "/orders",
       "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
@@ -37,6 +57,10 @@
       ],
       "UpstreamPathTemplate": "/products/{id}",
       "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "DangerousAcceptAnyServerCertificateValidator": true
     },
     {
@@ -50,6 +74,10 @@
       ],
       "UpstreamPathTemplate": "/orders/{id}",
       "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
       "DangerousAcceptAnyServerCertificateValidator": true
     }
   ],

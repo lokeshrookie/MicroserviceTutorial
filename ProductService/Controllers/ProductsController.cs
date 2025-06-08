@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Models;
 using System.Runtime;
@@ -7,6 +8,7 @@ namespace ProductService.Controllers
 {
     [Route("api/[controller]/")]
     [ApiController]
+    [Authorize]
     public class ProductsController : ControllerBase
     {
         private static readonly List<Product> products = new List<Product>()
@@ -18,6 +20,7 @@ namespace ProductService.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin,User")]
         public ActionResult<IEnumerable<Product>> GetProducts()
         {
             return Ok(products);
@@ -25,6 +28,7 @@ namespace ProductService.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,User")]
         public ActionResult<Product> GetProduct(int id)
         {
             var product = products.FirstOrDefault(x => x.Id == id);

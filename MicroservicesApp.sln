@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{FA13A4B1-2BBB-4A2B-B6D0-C3D0574FA1CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{17B084DB-31D0-46D9-BF72-D36F44D4726A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17B084DB-31D0-46D9-BF72-D36F44D4726A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17B084DB-31D0-46D9-BF72-D36F44D4726A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA13A4B1-2BBB-4A2B-B6D0-C3D0574FA1CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA13A4B1-2BBB-4A2B-B6D0-C3D0574FA1CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA13A4B1-2BBB-4A2B-B6D0-C3D0574FA1CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA13A4B1-2BBB-4A2B-B6D0-C3D0574FA1CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,5 @@
-## .NET Core ##
+## .NET Core / Visual Studio ##
 **/bin/
-bin\
 **/obj/
 *.user
 *.suo
@@ -8,15 +7,9 @@ bin\
 *.nupkg
 *.swp
 *.lock.json
+*.sln.docstates
 
-## Docker ##
-**/.dockerignore
-**/Dockerfile
-**/docker-compose.*
-**/.env
-*/docker-compose*.yml
-
-## IDE ##
+## IDE / Editors ##
 .vscode/
 .vs/
 .idea/
@@ -24,9 +17,16 @@ bin\
 
 ## Build Outputs ##
 **/publish/
-**/app/
 **/out/
-obj/*
+bld/
+[Dd]ebug/
+[Rr]elease/
+
+## Docker ##
+# Only ignore override files and local envs, NOT the actual Dockerfile or docker-compose.yml!
+docker-compose.override.yml
+**/.env
+**/.env.*
 
 ## Logs ##
 *.log

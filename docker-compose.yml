@@ -1,0 +1,99 @@
+version: '3.8'
+
+# JWT secret is defined once here and injected into every service as an
+# environment variable. ASP.NET Core environment variables override appsettings.json
+# values, so changing the secret only requires updating this file.
+x-jwt-env: &jwt-env
+  Jwt__Key: "this_is_my_super_secret_key_for_auth_service"
+  Jwt__Issuer: "AuthService"
+
+services:
+  gateway:
+    image: gateway
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Jwt__Key=this_is_my_super_secret_key_for_auth_service
+      - Jwt__Issuer=AuthService
+    depends_on:
+      productservice:
+        condition: service_healthy
+      orderservice:
+        condition: service_healthy
+      authservice:
+        condition: service_healthy
+    networks:
+      - microservices-net
+
+  productservice:
+    image: productservice
+    build:
+      context: .
+      dockerfile: ProductService/Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Jwt__Key=this_is_my_super_secret_key_for_auth_service
+      - Jwt__Issuer=AuthService
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  orderservice:
+    image: orderservice
+    build:
+      context: .
+      dockerfile: OrderService/Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Jwt__Key=this_is_my_super_secret_key_for_auth_service
+      - Jwt__Issuer=AuthService
+      - Services__ProductService=http://productservice
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  authservice:
+    image: authservice
+    build:
+      context: .
+      dockerfile: AuthService/Dockerfile
+    ports:
+      - "5003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Jwt__Key=this_is_my_super_secret_key_for_auth_service
+      - Jwt__Issuer=AuthService
+    networks:
+      - microservices-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+networks:
+  microservices-net:
+    driver: bridge

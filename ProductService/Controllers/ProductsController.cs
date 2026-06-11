@@ -1,42 +1,115 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProductService.Data;
 using ProductService.Models;
-using System.Runtime;
+using System.ComponentModel.DataAnnotations;
 
-namespace ProductService.Controllers
+namespace ProductService.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]  // All endpoints require a valid JWT
+public class ProductsController : ControllerBase
 {
-    [Route("api/[controller]/")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+    private readonly ProductDbContext _db;
+
+    public ProductsController(ProductDbContext db)
     {
-        private static readonly List<Product> products = new List<Product>()
+        _db = db;
+    }
+
+    // ─── GET /api/products ────────────────────────────────────────────────────
+
+    /// <summary>Returns all products.</summary>
+    [HttpGet]
+    [Authorize(Roles = "Admin,User")]
+    public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+    {
+        var products = await _db.Products.ToListAsync();
+        return Ok(products);
+    }
+
+    // ─── GET /api/products/{id} ───────────────────────────────────────────────
+
+    /// <summary>Returns a single product by ID.</summary>
+    [HttpGet("{id:int}")]
+    [Authorize(Roles = "Admin,User")]
+    public async Task<ActionResult<Product>> GetProduct(int id)
+    {
+        var product = await _db.Products.FindAsync(id);
+        if (product is null)
+            return NotFound(new { Message = $"Product with ID {id} was not found." });
+
+        return Ok(product);
+    }
+
+    // ─── POST /api/products ───────────────────────────────────────────────────
+
+    /// <summary>Creates a new product. Admin role required.</summary>
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<Product>> CreateProduct([FromBody] CreateProductRequest request)
+    {
+        var product = new Product
         {
-            new Product { Id = 1, Name = "Laptop", Price = 999.9m},
-            new Product { Id = 1, Name = "Mouse", Price = 24.9m},            
-            new Product { Id = 1, Name = "Keyboard", Price = 49.9m},
+            Name  = request.Name.Trim(),
+            Price = request.Price
         };
 
+        _db.Products.Add(product);
+        await _db.SaveChangesAsync();
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetProducts()
-        {
-            return Ok(products);
-        }
+        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+    }
 
+    // ─── PUT /api/products/{id} ───────────────────────────────────────────────
 
-        [HttpGet("{id}")]
-        public ActionResult<Product> GetProduct(int id)
-        {
-            var product = products.FirstOrDefault(x => x.Id == id);
+    /// <summary>Updates an existing product. Admin role required.</summary>
+    [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateProduct(int id, [FromBody] UpdateProductRequest request)
+    {
+        var product = await _db.Products.FindAsync(id);
+        if (product is null)
+            return NotFound(new { Message = $"Product with ID {id} was not found." });
 
-            if(product == null)
-            {
-                return NotFound();
-            }
+        product.Name  = request.Name.Trim();
+        product.Price = request.Price;
 
-            return Ok(product);
-        }
+        await _db.SaveChangesAsync();
 
+        return Ok(product);
+    }
 
+    // ─── DELETE /api/products/{id} ────────────────────────────────────────────
+
+    /// <summary>Deletes a product by ID. Admin role required.</summary>
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var product = await _db.Products.FindAsync(id);
+        if (product is null)
+            return NotFound(new { Message = $"Product with ID {id} was not found." });
+
+        _db.Products.Remove(product);
+        await _db.SaveChangesAsync();
+
+        return NoContent();
     }
 }
+
+// ─── Request DTOs ─────────────────────────────────────────────────────────────
+
+/// <summary>Payload for creating a product.</summary>
+public record CreateProductRequest(
+    [Required][StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters.")] string Name,
+    [Range(0.01, 1_000_000, ErrorMessage = "Price must be between 0.01 and 1,000,000.")] decimal Price
+);
+
+/// <summary>Payload for updating a product.</summary>
+public record UpdateProductRequest(
+    [Required][StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters.")] string Name,
+    [Range(0.01, 1_000_000, ErrorMessage = "Price must be between 0.01 and 1,000,000.")] decimal Price
+);

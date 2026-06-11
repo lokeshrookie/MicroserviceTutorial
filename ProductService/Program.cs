@@ -12,7 +12,8 @@ builder.Services.AddSwaggerGen();
 
 // Register EF Core InMemory database for product catalog
 builder.Services.AddDbContext<ProductDbContext>(options =>
-    options.UseInMemoryDatabase("ProductDb"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    // options.UseInMemoryDatabase("ProductDb"));
 
 // Add JWT authentication — validates tokens issued by AuthService
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

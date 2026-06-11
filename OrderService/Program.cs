@@ -12,8 +12,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Register EF Core InMemory database for orders
-builder.Services.AddDbContext<OrderDbContext>(options =>
-    options.UseInMemoryDatabase("OrderDb"));
+builder.Services.AddDbContext<OrderDbContext>(options => 
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    // options.UseInMemoryDatabase("OrderDb"));
+
 
 // Typed HttpClient for inter-service communication with ProductService.
 // Base address is read from configuration so it works both locally and in Docker.
